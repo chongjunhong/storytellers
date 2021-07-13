@@ -1,57 +1,47 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import React, { Fragment } from 'react';
+import {
+  Switch,
+  Route,
+  useLocation,
+}  from "react-router-dom";
+import Landing from './components/pages/landing'
+import Story from './components/pages/story';
+import Login from './components/login';
+import Register from './components/register';
+import Auth from './components/pages/auth';
+import Header from './components/header';
+import Amplify from '@aws-amplify/core';
+import aws_exports from './aws-exports';
+import useCheckLogin from './helpers/hooks/check-login';
+
+// in this way you are only importing Auth and configuring it.
+Amplify.configure(aws_exports);
 
 function App() {
+  const query = new URLSearchParams(useLocation().search);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
+    <Fragment>
+      <Header />
+      <Switch>
+      <Route exact path="/">
+          <Landing />
+        </Route>
+      <Route path="/story/:storyId?">
+          <Story inviteId={query.get('i')} />
+      </Route>
+      <Route exact path="/login">
+        <Auth>
+          <Login />
+        </Auth>
+      </Route>
+      <Route exact path="/register">
+        <Auth>
+          <Register />
+        </Auth>
+      </Route>
+      </Switch>
+    </Fragment>
   );
 }
 
